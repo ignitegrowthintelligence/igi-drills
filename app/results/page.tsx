@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
@@ -22,12 +22,14 @@ export default function ResultsPage() {
   const postScoreRan = useRef(false)
 
   useEffect(() => {
-    // ── Bug fix: skip re-scoring if results already exist ──────────────────
     const existingScores = sessionStorage.getItem('drills_scores')
     if (existingScores) {
       try {
-        setScores(JSON.parse(existingScores))
-        return
+        const parsed = JSON.parse(existingScores)
+        if (parsed && parsed.discovery) {
+          setScores(parsed)
+          return
+        }
       } catch {
         // corrupt — fall through to re-score
       }
@@ -43,7 +45,6 @@ export default function ResultsPage() {
     const prepQuestions = prepQRaw ? JSON.parse(prepQRaw) : []
     const prepAnswers = prepARaw ? JSON.parse(prepARaw) : []
 
-    // Animate loading steps
     let step = 0
     const interval = setInterval(() => {
       step++
@@ -68,7 +69,6 @@ export default function ResultsPage() {
         sessionStorage.setItem('drills_sbs', JSON.stringify(data.sideBySide || []))
         setTimeout(() => setScores(data), 600)
 
-        // Fire email + save-session best-effort (non-blocking)
         if (!postScoreRan.current) {
           postScoreRan.current = true
           const sellerRaw = sessionStorage.getItem('drills_seller')
@@ -98,7 +98,7 @@ export default function ResultsPage() {
     <div style={{ background: '#1a1a1a', minHeight: '100vh' }}>
       <Header screen="Results" />
       <div style={{ maxWidth: '480px', margin: '80px auto', padding: '0 24px' }}>
-        <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '32px' }}>
+        <div style={{ background: '#2a2a2a', border: '1px solid #404040', borderRadius: '4px', padding: '32px' }}>
           <p style={{ fontSize: '12px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '20px' }}>Scoring Your Call</p>
           {LOADING_STEPS.map((step, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', opacity: i <= loadingStep ? 1 : 0.25, transition: 'opacity 0.4s' }}>
@@ -114,17 +114,17 @@ export default function ResultsPage() {
   )
 
   const { total, totalWithBonus, buriedOpportunity, proposalReadiness, disqualifying, preCall, discovery, assignment, callCraft } = scores
-  if (!discovery?.elements) {
-    return (
-      <div style={{ background: '#1a1a1a', minHeight: '100vh' }}>
-        <Header screen="Results" />
-        <div style={{ maxWidth: '640px', margin: '60px auto', padding: '0 24px', textAlign: 'center' }}>
-          <p style={{ color: '#f87171', fontSize: '15px' }}>Scoring returned incomplete data. Please try again.</p>
-          <button onClick={() => router.push('/')} style={{ marginTop: '20px', padding: '12px 24px', background: '#00aebd', border: 'none', borderRadius: '4px', color: '#ffffff', fontWeight: 700, cursor: 'pointer' }}>Start Over</button>
-        </div>
+
+  if (!discovery?.elements) return (
+    <div style={{ background: '#1a1a1a', minHeight: '100vh' }}>
+      <Header screen="Results" />
+      <div style={{ maxWidth: '640px', margin: '60px auto', padding: '0 24px', textAlign: 'center' }}>
+        <p style={{ color: '#f87171', fontSize: '15px' }}>Scoring returned incomplete data. Please try again.</p>
+        <button onClick={() => router.push('/')} style={{ marginTop: '20px', padding: '12px 24px', background: '#00aebd', border: 'none', borderRadius: '4px', color: '#ffffff', fontWeight: 700, cursor: 'pointer' }}>Start Over</button>
       </div>
-    )
-  }
+    </div>
+  )
+
   const scoreColor = totalWithBonus >= 85 ? '#75BE19' : totalWithBonus >= 60 ? '#00aebd' : '#f87171'
   const elements = discovery.elements
 
@@ -134,18 +134,16 @@ export default function ResultsPage() {
       <main style={{ maxWidth: '680px', margin: '0 auto', padding: '40px 24px 80px' }}>
 
         {/* Hero */}
-        <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '32px', marginBottom: '24px', textAlign: 'center' }}>
+        <div style={{ background: '#2a2a2a', border: '1px solid #404040', borderRadius: '4px', padding: '32px', marginBottom: '24px', textAlign: 'center' }}>
           <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px' }}>Overall Score</p>
-          <div style={{ fontSize: '80px', fontWeight: 800, color: scoreColor, lineHeight: 1, marginBottom: '8px' }}>
-            {totalWithBonus}
-          </div>
+          <div style={{ fontSize: '80px', fontWeight: 800, color: scoreColor, lineHeight: 1, marginBottom: '8px' }}>{totalWithBonus}</div>
           <p style={{ fontSize: '13px', color: '#888888', marginBottom: '16px' }}>
             out of 100{buriedOpportunity.bonus > 0 && ` · base ${total} + ${buriedOpportunity.bonus} bonus`}
           </p>
           {disqualifying.detected && (
-            <div style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(0,174,189,0.35)', borderRadius: '4px', padding: '12px 16px', marginBottom: '16px', textAlign: 'left' }}>
-              <p style={{ fontSize: '12px', color: '#00aebd', fontWeight: 700, marginBottom: '4px' }}>⚠ Score capped at 60</p>
-              {disqualifying.behaviors.map((b, i) => <p key={i} style={{ fontSize: '13px', color: '#ffffff', marginBottom: '2px' }}>· {b}</p>)}
+            <div style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '4px', padding: '12px 16px', marginBottom: '16px', textAlign: 'left' }}>
+              <p style={{ fontSize: '12px', color: '#f87171', fontWeight: 700, marginBottom: '4px' }}>⚠ Score capped at 60</p>
+              {disqualifying.behaviors.map((b: string, i: number) => <p key={i} style={{ fontSize: '13px', color: '#ffffff', marginBottom: '2px' }}>· {b}</p>)}
             </div>
           )}
           <span style={{
@@ -159,40 +157,41 @@ export default function ResultsPage() {
         </div>
 
         {/* Section breakdown */}
-        <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '24px', marginBottom: '20px' }}>
+        <div style={{ background: '#2a2a2a', border: '1px solid #404040', borderRadius: '4px', padding: '24px', marginBottom: '20px' }}>
           <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '20px' }}>Section Breakdown</p>
           <ScoreBar label="Pre-Call Preparation" score={preCall.score} max={preCall.max} />
           <ScoreBar label="7 Discovery Elements" score={discovery.score} max={discovery.max} />
           <ScoreBar label="The Assignment" score={assignment.score} max={assignment.max} reason={assignment.reason} />
           <ScoreBar label="Call Craft" score={callCraft.score} max={callCraft.max} />
           {buriedOpportunity.bonus > 0 && (
-            <ScoreBar label="Buried Opportunity Bonus" score={buriedOpportunity.bonus} max={5} color="#22c55e" reason={buriedOpportunity.reason} />
+            <ScoreBar label="Buried Opportunity Bonus" score={buriedOpportunity.bonus} max={5} color="#75BE19" reason={buriedOpportunity.reason} />
           )}
         </div>
 
-        {/* Discovery elements detail */}
-        <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '24px', marginBottom: '24px' }}>
+        {/* Discovery elements */}
+        <div style={{ background: '#2a2a2a', border: '1px solid #404040', borderRadius: '4px', padding: '24px', marginBottom: '24px' }}>
           <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '20px' }}>Discovery Elements</p>
-          <ScoreBar label="Current Marketing" score={elements.currentMarketing.score} max={elements.currentMarketing.max} reason={elements.currentMarketing.reason} />
-          <ScoreBar label="Marketing Objective" score={elements.marketingObjective.score} max={elements.marketingObjective.max} reason={elements.marketingObjective.reason} />
-          <ScoreBar label="USP" score={elements.usp.score} max={elements.usp.max} reason={elements.usp.reason} />
-          <ScoreBar label="Target Audience" score={elements.targetAudience.score} max={elements.targetAudience.max} reason={elements.targetAudience.reason} />
-          <ScoreBar label="Measurable KPI" score={elements.measurableKpi.score} max={elements.measurableKpi.max} reason={elements.measurableKpi.reason} />
-          <ScoreBar label="Timing" score={elements.timing.score} max={elements.timing.max} reason={elements.timing.reason} />
-          <ScoreBar label="Budget" score={elements.budget.score} max={elements.budget.max} reason={elements.budget.reason} />
+          <ScoreBar label="Current Marketing" score={elements.currentMarketing?.score ?? 0} max={elements.currentMarketing?.max ?? 6} reason={elements.currentMarketing?.reason} />
+          <ScoreBar label="Marketing Objective" score={elements.marketingObjective?.score ?? 0} max={elements.marketingObjective?.max ?? 6} reason={elements.marketingObjective?.reason} />
+          <ScoreBar label="USP" score={elements.usp?.score ?? 0} max={elements.usp?.max ?? 6} reason={elements.usp?.reason} />
+          <ScoreBar label="Target Audience" score={elements.targetAudience?.score ?? 0} max={elements.targetAudience?.max ?? 6} reason={elements.targetAudience?.reason} />
+          <ScoreBar label="Measurable KPI" score={elements.measurableKpi?.score ?? 0} max={elements.measurableKpi?.max ?? 6} reason={elements.measurableKpi?.reason} />
+          <ScoreBar label="Timing" score={elements.timing?.score ?? 0} max={elements.timing?.max ?? 6} reason={elements.timing?.reason} />
+          <ScoreBar label="Budget" score={elements.budget?.score ?? 0} max={elements.budget?.max ?? 9} reason={elements.budget?.reason} />
         </div>
 
-        {/* CTA */}
+        {/* CTAs */}
         <button
           onClick={() => router.push('/coaching')}
-          style={{ width: '100%', padding: '16px', background: '#00aebd', border: 'none', borderRadius: '4px', color: '#ffffff', fontSize: '15px', fontWeight: 700, cursor: 'pointer' }}>
+          style={{ width: '100%', padding: '16px', background: '#00aebd', border: 'none', borderRadius: '4px', color: '#ffffff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', marginBottom: '12px' }}>
           View Coaching →
         </button>
-        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+        <div style={{ textAlign: 'center', marginTop: '16px' }}>
           <a href="/records" style={{ fontSize: '13px', color: '#888888', textDecoration: 'none', fontFamily: 'Inter, sans-serif' }}>
             View Leaderboard →
           </a>
         </div>
+
       </main>
     </div>
   )
@@ -205,7 +204,6 @@ function sendPostScoreActions(
   prepAnswers: string[],
   seller: { name: string; email: string }
 ) {
-  // Send results email
   if (seller.email) {
     fetch('/api/email', {
       method: 'POST',
@@ -214,7 +212,6 @@ function sendPostScoreActions(
     }).catch(() => { /* best-effort */ })
   }
 
-  // Save session to Supabase
   fetch('/api/save-session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
