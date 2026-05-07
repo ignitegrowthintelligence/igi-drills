@@ -45,6 +45,26 @@ export default function CapturePage() {
           </p>
         </div>
 
+        {/* Quick-access nav cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '24px' }}>
+          <a href="/records?tab=tests" style={{
+            display: 'block', padding: '12px 16px', background: '#2a2a2a',
+            border: '1px solid #404040', borderRadius: '4px', textDecoration: 'none',
+            textAlign: 'center', fontFamily: 'Inter, sans-serif',
+          }}>
+            <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '2px' }}>View</p>
+            <p style={{ fontSize: '14px', color: '#ffffff', fontWeight: 600 }}>Past Tests</p>
+          </a>
+          <a href="/records?tab=leaderboard" style={{
+            display: 'block', padding: '12px 16px', background: '#2a2a2a',
+            border: '1px solid #404040', borderRadius: '4px', textDecoration: 'none',
+            textAlign: 'center', fontFamily: 'Inter, sans-serif',
+          }}>
+            <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '2px' }}>All-Time</p>
+            <p style={{ fontSize: '14px', color: '#ffffff', fontWeight: 600 }}>Leaderboard</p>
+          </a>
+        </div>
+
         {/* Form */}
         <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '28px' }}>
           <div style={{ marginBottom: '18px' }}>
@@ -98,11 +118,6 @@ export default function CapturePage() {
           >
             Continue →
           </button>
-          <div style={{ textAlign: 'center', marginTop: '16px' }}>
-            <a href="/records" style={{ fontSize: '12px', color: '#888888', textDecoration: 'none', fontFamily: 'Inter, sans-serif' }}>
-              View Past Tests &amp; Leaderboard →
-            </a>
-          </div>
         </div>
       </main>
     </div>

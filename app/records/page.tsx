@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Header from '@/components/Header'
 
 type SessionRow = {
@@ -13,7 +14,10 @@ type SessionRow = {
 }
 
 export default function RecordsPage() {
-  const [tab, setTab] = useState<'tests' | 'leaderboard'>('tests')
+  const searchParams = useSearchParams()
+  const [tab, setTab] = useState<'tests' | 'leaderboard'>(
+    searchParams.get('tab') === 'leaderboard' ? 'leaderboard' : 'tests'
+  )
   const [sessions, setSessions] = useState<SessionRow[]>([])
   const [loading, setLoading] = useState(true)
 
