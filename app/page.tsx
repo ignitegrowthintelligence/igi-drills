@@ -98,6 +98,11 @@ export default function CapturePage() {
           >
             Continue →
           </button>
+          <div style={{ textAlign: 'center', marginTop: '16px' }}>
+            <a href="/records" style={{ fontSize: '12px', color: '#888888', textDecoration: 'none', fontFamily: 'Inter, sans-serif' }}>
+              View Past Tests &amp; Leaderboard →
+            </a>
+          </div>
         </div>
       </main>
     </div>

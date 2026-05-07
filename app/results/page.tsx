@@ -173,6 +173,11 @@ export default function ResultsPage() {
           style={{ width: '100%', padding: '16px', background: '#00aebd', border: 'none', borderRadius: '4px', color: '#ffffff', fontSize: '15px', fontWeight: 700, cursor: 'pointer' }}>
           View Coaching →
         </button>
+        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+          <a href="/records" style={{ fontSize: '13px', color: '#888888', textDecoration: 'none', fontFamily: 'Inter, sans-serif' }}>
+            View Leaderboard →
+          </a>
+        </div>
       </main>
     </div>
   )
