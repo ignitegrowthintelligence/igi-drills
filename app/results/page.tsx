@@ -58,6 +58,10 @@ export default function ResultsPage() {
       .then(r => r.json())
       .then(data => {
         clearInterval(interval)
+        if (data.error || !data.discovery) {
+          setError('Scoring failed — the call may have been too long or the AI timed out. Please try again.')
+          return
+        }
         setLoadingStep(LOADING_STEPS.length - 1)
         sessionStorage.setItem('drills_scores', JSON.stringify(data))
         sessionStorage.setItem('drills_coaching', data.coaching || '')
@@ -110,6 +114,17 @@ export default function ResultsPage() {
   )
 
   const { total, totalWithBonus, buriedOpportunity, proposalReadiness, disqualifying, preCall, discovery, assignment, callCraft } = scores
+  if (!discovery?.elements) {
+    return (
+      <div style={{ background: '#1a1a1a', minHeight: '100vh' }}>
+        <Header screen="Results" />
+        <div style={{ maxWidth: '640px', margin: '60px auto', padding: '0 24px', textAlign: 'center' }}>
+          <p style={{ color: '#f87171', fontSize: '15px' }}>Scoring returned incomplete data. Please try again.</p>
+          <button onClick={() => router.push('/')} style={{ marginTop: '20px', padding: '12px 24px', background: '#00aebd', border: 'none', borderRadius: '4px', color: '#ffffff', fontWeight: 700, cursor: 'pointer' }}>Start Over</button>
+        </div>
+      </div>
+    )
+  }
   const scoreColor = totalWithBonus >= 85 ? '#75BE19' : totalWithBonus >= 60 ? '#00aebd' : '#f87171'
   const elements = discovery.elements
 
