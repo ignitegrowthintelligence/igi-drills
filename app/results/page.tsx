@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
@@ -81,27 +81,27 @@ export default function ResultsPage() {
   }, [router])
 
   if (error) return (
-    <div style={{ background: '#070b14', minHeight: '100vh' }}>
+    <div style={{ background: '#1a1a1a', minHeight: '100vh' }}>
       <Header screen="Results" />
       <div style={{ maxWidth: '640px', margin: '60px auto', padding: '0 24px', textAlign: 'center' }}>
         <p style={{ color: '#f87171', fontSize: '15px' }}>{error}</p>
-        <button onClick={() => router.push('/')} style={{ marginTop: '20px', padding: '12px 24px', background: '#f59e0b', border: 'none', borderRadius: '6px', color: '#070b14', fontWeight: 700, cursor: 'pointer' }}>Start Over</button>
+        <button onClick={() => router.push('/')} style={{ marginTop: '20px', padding: '12px 24px', background: '#00aebd', border: 'none', borderRadius: '4px', color: '#ffffff', fontWeight: 700, cursor: 'pointer' }}>Start Over</button>
       </div>
     </div>
   )
 
   if (!scores) return (
-    <div style={{ background: '#070b14', minHeight: '100vh' }}>
+    <div style={{ background: '#1a1a1a', minHeight: '100vh' }}>
       <Header screen="Results" />
       <div style={{ maxWidth: '480px', margin: '80px auto', padding: '0 24px' }}>
-        <div style={{ background: '#0d1526', border: '1px solid #1e3054', borderRadius: '10px', padding: '32px' }}>
-          <p style={{ fontSize: '12px', color: '#6a87ab', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '20px' }}>Scoring Your Call</p>
+        <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '32px' }}>
+          <p style={{ fontSize: '12px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '20px' }}>Scoring Your Call</p>
           {LOADING_STEPS.map((step, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', opacity: i <= loadingStep ? 1 : 0.25, transition: 'opacity 0.4s' }}>
-              <span style={{ fontSize: '13px', color: i < loadingStep ? '#22c55e' : i === loadingStep ? '#f59e0b' : '#6a87ab' }}>
+              <span style={{ fontSize: '13px', color: i < loadingStep ? '#75BE19' : i === loadingStep ? '#00aebd' : '#888888' }}>
                 {i < loadingStep ? '✓' : i === loadingStep ? '›' : '○'}
               </span>
-              <span style={{ fontSize: '13px', color: i < loadingStep ? '#6a87ab' : i === loadingStep ? '#e2eaf6' : '#1e3054' }}>{step}</span>
+              <span style={{ fontSize: '13px', color: i < loadingStep ? '#888888' : i === loadingStep ? '#ffffff' : '#404040' }}>{step}</span>
             </div>
           ))}
         </div>
@@ -110,42 +110,42 @@ export default function ResultsPage() {
   )
 
   const { total, totalWithBonus, buriedOpportunity, proposalReadiness, disqualifying, preCall, discovery, assignment, callCraft } = scores
-  const scoreColor = totalWithBonus >= 85 ? '#22c55e' : totalWithBonus >= 60 ? '#f59e0b' : '#f87171'
+  const scoreColor = totalWithBonus >= 85 ? '#75BE19' : totalWithBonus >= 60 ? '#00aebd' : '#f87171'
   const elements = discovery.elements
 
   return (
-    <div style={{ background: '#070b14', minHeight: '100vh' }}>
+    <div style={{ background: '#1a1a1a', minHeight: '100vh' }}>
       <Header screen="Results" />
       <main style={{ maxWidth: '680px', margin: '0 auto', padding: '40px 24px 80px' }}>
 
         {/* Hero */}
-        <div style={{ background: '#0d1526', border: '1px solid #1e3054', borderRadius: '10px', padding: '32px', marginBottom: '24px', textAlign: 'center' }}>
-          <p style={{ fontSize: '11px', color: '#6a87ab', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px' }}>Overall Score</p>
+        <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '32px', marginBottom: '24px', textAlign: 'center' }}>
+          <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px' }}>Overall Score</p>
           <div style={{ fontSize: '80px', fontWeight: 800, color: scoreColor, lineHeight: 1, marginBottom: '8px' }}>
             {totalWithBonus}
           </div>
-          <p style={{ fontSize: '13px', color: '#6a87ab', marginBottom: '16px' }}>
+          <p style={{ fontSize: '13px', color: '#888888', marginBottom: '16px' }}>
             out of 100{buriedOpportunity.bonus > 0 && ` · base ${total} + ${buriedOpportunity.bonus} bonus`}
           </p>
           {disqualifying.detected && (
-            <div style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: '6px', padding: '12px 16px', marginBottom: '16px', textAlign: 'left' }}>
-              <p style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700, marginBottom: '4px' }}>⚠ Score capped at 60</p>
-              {disqualifying.behaviors.map((b, i) => <p key={i} style={{ fontSize: '13px', color: '#e2eaf6', marginBottom: '2px' }}>· {b}</p>)}
+            <div style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(0,174,189,0.35)', borderRadius: '4px', padding: '12px 16px', marginBottom: '16px', textAlign: 'left' }}>
+              <p style={{ fontSize: '12px', color: '#00aebd', fontWeight: 700, marginBottom: '4px' }}>⚠ Score capped at 60</p>
+              {disqualifying.behaviors.map((b, i) => <p key={i} style={{ fontSize: '13px', color: '#ffffff', marginBottom: '2px' }}>· {b}</p>)}
             </div>
           )}
           <span style={{
-            display: 'inline-block', padding: '6px 20px', borderRadius: '6px', fontSize: '14px', fontWeight: 700,
-            background: proposalReadiness === 'pass' ? 'rgba(34,197,94,0.12)' : 'rgba(248,113,113,0.12)',
-            color: proposalReadiness === 'pass' ? '#22c55e' : '#f87171',
-            border: `1px solid ${proposalReadiness === 'pass' ? 'rgba(34,197,94,0.3)' : 'rgba(248,113,113,0.3)'}`,
+            display: 'inline-block', padding: '6px 20px', borderRadius: '4px', fontSize: '14px', fontWeight: 700,
+            background: proposalReadiness === 'pass' ? 'rgba(117,190,25,0.12)' : 'rgba(248,113,113,0.12)',
+            color: proposalReadiness === 'pass' ? '#75BE19' : '#f87171',
+            border: `1px solid ${proposalReadiness === 'pass' ? 'rgba(117,190,25,0.3)' : 'rgba(248,113,113,0.3)'}`,
           }}>
             Proposal Readiness: {proposalReadiness.toUpperCase()}
           </span>
         </div>
 
         {/* Section breakdown */}
-        <div style={{ background: '#0d1526', border: '1px solid #1e3054', borderRadius: '10px', padding: '24px', marginBottom: '20px' }}>
-          <p style={{ fontSize: '11px', color: '#6a87ab', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '20px' }}>Section Breakdown</p>
+        <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '24px', marginBottom: '20px' }}>
+          <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '20px' }}>Section Breakdown</p>
           <ScoreBar label="Pre-Call Preparation" score={preCall.score} max={preCall.max} />
           <ScoreBar label="7 Discovery Elements" score={discovery.score} max={discovery.max} />
           <ScoreBar label="The Assignment" score={assignment.score} max={assignment.max} reason={assignment.reason} />
@@ -156,8 +156,8 @@ export default function ResultsPage() {
         </div>
 
         {/* Discovery elements detail */}
-        <div style={{ background: '#0d1526', border: '1px solid #1e3054', borderRadius: '10px', padding: '24px', marginBottom: '24px' }}>
-          <p style={{ fontSize: '11px', color: '#6a87ab', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '20px' }}>Discovery Elements</p>
+        <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '24px', marginBottom: '24px' }}>
+          <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '20px' }}>Discovery Elements</p>
           <ScoreBar label="Current Marketing" score={elements.currentMarketing.score} max={elements.currentMarketing.max} reason={elements.currentMarketing.reason} />
           <ScoreBar label="Marketing Objective" score={elements.marketingObjective.score} max={elements.marketingObjective.max} reason={elements.marketingObjective.reason} />
           <ScoreBar label="USP" score={elements.usp.score} max={elements.usp.max} reason={elements.usp.reason} />
@@ -170,7 +170,7 @@ export default function ResultsPage() {
         {/* CTA */}
         <button
           onClick={() => router.push('/coaching')}
-          style={{ width: '100%', padding: '16px', background: '#f59e0b', border: 'none', borderRadius: '6px', color: '#070b14', fontSize: '15px', fontWeight: 700, cursor: 'pointer' }}>
+          style={{ width: '100%', padding: '16px', background: '#00aebd', border: 'none', borderRadius: '4px', color: '#ffffff', fontSize: '15px', fontWeight: 700, cursor: 'pointer' }}>
           View Coaching →
         </button>
       </main>

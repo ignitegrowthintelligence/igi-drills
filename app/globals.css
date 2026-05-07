@@ -1,19 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;500&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg: #070b14;
-  --surface: #0d1526;
-  --surface-2: #131f38;
-  --border: #1e3054;
-  --text: #e2eaf6;
-  --text-muted: #6a87ab;
-  --accent: #f59e0b;
-  --green: #22c55e;
+  --bg: #1a1a1a;
+  --surface: #2a2a2a;
+  --surface-2: #333333;
+  --border: #404040;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --text-secondary: #51585c;
+  --accent: #00aebd;
+  --green: #75BE19;
+  --orange: #ef9809;
   --red: #f87171;
-  --blue: #4a9eff;
 }
 
 * { box-sizing: border-box; }
@@ -21,11 +22,11 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Roboto', system-ui, sans-serif;
   min-height: 100vh;
 }
 
-::selection { background: rgba(245,158,11,0.25); }
+::selection { background: rgba(0,174,189,0.25); }
 
 textarea:focus, input:focus { outline: none; }
 

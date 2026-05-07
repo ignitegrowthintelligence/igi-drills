@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
@@ -28,27 +28,27 @@ export default function CapturePage() {
   }
 
   return (
-    <div style={{ background: '#070b14', minHeight: '100vh' }}>
+    <div style={{ background: '#1a1a1a', minHeight: '100vh' }}>
       <Header screen="Welcome" />
       <main style={{ maxWidth: '480px', margin: '0 auto', padding: '80px 24px' }}>
 
         {/* Title */}
         <div style={{ marginBottom: '40px', textAlign: 'center' }}>
-          <div style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '0.14em', color: '#f59e0b', marginBottom: '12px', textTransform: 'uppercase' }}>
+          <div style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '0.14em', color: '#00aebd', marginBottom: '12px', textTransform: 'uppercase' }}>
             IGI DRILLS
           </div>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#e2eaf6', marginBottom: '8px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
             Discovery Call Simulator
           </h1>
-          <p style={{ fontSize: '14px', color: '#6a87ab', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '14px', color: '#888888', lineHeight: 1.6 }}>
             Enter your details to get started. Your results will be emailed to you when the drill is complete.
           </p>
         </div>
 
         {/* Form */}
-        <div style={{ background: '#0d1526', border: '1px solid #1e3054', borderRadius: '10px', padding: '28px' }}>
+        <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '28px' }}>
           <div style={{ marginBottom: '18px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#6a87ab', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#888888', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px' }}>
               Full Name
             </label>
             <input
@@ -59,15 +59,15 @@ export default function CapturePage() {
               placeholder="Your full name"
               autoFocus
               style={{
-                width: '100%', background: '#131f38', border: '1px solid #1e3054',
-                borderRadius: '6px', padding: '12px 14px', fontSize: '14px',
-                color: '#e2eaf6', fontFamily: 'inherit',
+                width: '100%', background: '#333333', border: '1px solid #1e3054',
+                borderRadius: '4px', padding: '12px 14px', fontSize: '14px',
+                color: '#ffffff', fontFamily: "'Inter', sans-serif",
               }}
             />
           </div>
 
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#6a87ab', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#888888', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px' }}>
               Email Address
             </label>
             <input
@@ -77,9 +77,9 @@ export default function CapturePage() {
               onKeyDown={handleKeyDown}
               placeholder="your@email.com"
               style={{
-                width: '100%', background: '#131f38', border: '1px solid #1e3054',
-                borderRadius: '6px', padding: '12px 14px', fontSize: '14px',
-                color: '#e2eaf6', fontFamily: 'inherit',
+                width: '100%', background: '#333333', border: '1px solid #1e3054',
+                borderRadius: '4px', padding: '12px 14px', fontSize: '14px',
+                color: '#ffffff', fontFamily: "'Inter', sans-serif",
               }}
             />
           </div>
@@ -91,8 +91,8 @@ export default function CapturePage() {
           <button
             onClick={handleContinue}
             style={{
-              width: '100%', padding: '14px', background: '#f59e0b', border: 'none',
-              borderRadius: '6px', color: '#070b14', fontSize: '15px', fontWeight: 700,
+              width: '100%', padding: '14px', background: '#00aebd', border: 'none',
+              borderRadius: '4px', color: '#ffffff', fontSize: '15px', fontWeight: 700,
               cursor: 'pointer', letterSpacing: '0.01em',
             }}
           >

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
@@ -160,20 +160,20 @@ export default function CallPage() {
   }
 
   return (
-    <div style={{ background: '#070b14', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ background: '#1a1a1a', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header screen="Live Call" />
 
       {/* Call bar */}
-      <div style={{ background: '#0d1526', borderBottom: '1px solid #1e3054', padding: '10px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: '#2a2a2a', borderBottom: '1px solid #1e3054', padding: '10px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ display: 'inline-block', width: '8px', height: '8px', background: '#22c55e', borderRadius: '50%', animation: 'blink 2s infinite' }} />
-          <span style={{ fontSize: '13px', color: '#6a87ab' }}>Reveal MedSpas · Liz Rose</span>
-          <span style={{ fontSize: '12px', color: '#1e3054' }}>·</span>
-          <span style={{ fontSize: '12px', color: '#6a87ab' }}>{transcript.length} exchanges</span>
+          <span style={{ display: 'inline-block', width: '8px', height: '8px', background: '#75BE19', borderRadius: '50%', animation: 'blink 2s infinite' }} />
+          <span style={{ fontSize: '13px', color: '#888888' }}>Reveal MedSpas · Liz Rose</span>
+          <span style={{ fontSize: '12px', color: '#404040' }}>·</span>
+          <span style={{ fontSize: '12px', color: '#888888' }}>{transcript.length} exchanges</span>
         </div>
         <button
           onClick={handleEndCall}
-          style={{ padding: '7px 16px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '6px', color: '#f87171', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+          style={{ padding: '7px 16px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '4px', color: '#f87171', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
           End Call
         </button>
       </div>
@@ -185,10 +185,10 @@ export default function CallPage() {
         ))}
         {loading && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#4a9eff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: '#070b14', flexShrink: 0 }}>LR</div>
-            <div style={{ background: '#0d1526', border: '1px solid #1e3054', borderRadius: '4px 12px 12px 12px', padding: '12px 16px', display: 'flex', gap: '5px' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#00aebd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: '#ffffff', flexShrink: 0 }}>LR</div>
+            <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px 12px 12px 12px', padding: '12px 16px', display: 'flex', gap: '5px' }}>
               {[0,1,2].map(i => (
-                <span key={i} className="typing-dot" style={{ width: '6px', height: '6px', background: '#6a87ab', borderRadius: '50%', display: 'inline-block' }} />
+                <span key={i} className="typing-dot" style={{ width: '6px', height: '6px', background: '#888888', borderRadius: '50%', display: 'inline-block' }} />
               ))}
             </div>
           </div>
@@ -197,7 +197,7 @@ export default function CallPage() {
       </div>
 
       {/* Input */}
-      <div style={{ background: '#0d1526', borderTop: '1px solid #1e3054', padding: '16px 24px' }}>
+      <div style={{ background: '#2a2a2a', borderTop: '1px solid #1e3054', padding: '16px 24px' }}>
         <div style={{ maxWidth: '760px', margin: '0 auto', display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
           <div style={{ flex: 1, position: 'relative' }}>
             <textarea
@@ -209,8 +209,8 @@ export default function CallPage() {
               placeholder="Type your response... (Enter to send, Shift+Enter for new line)"
               rows={2}
               style={{
-                width: '100%', background: '#131f38', border: `1px solid ${listening ? 'rgba(248,113,113,0.5)' : '#1e3054'}`, borderRadius: '8px',
-                padding: '12px', fontSize: '14px', color: '#e2eaf6', resize: 'none', fontFamily: 'inherit',
+                width: '100%', background: '#333333', border: `1px solid ${listening ? 'rgba(248,113,113,0.5)' : '#404040'}`, borderRadius: '4px',
+                padding: '12px', fontSize: '14px', color: '#ffffff', resize: 'none', fontFamily: "'Inter', sans-serif",
                 opacity: loading ? 0.5 : 1, boxSizing: 'border-box',
               }}
             />
@@ -232,9 +232,9 @@ export default function CallPage() {
             disabled={loading}
             title={listening ? 'Stop recording' : 'Start voice input'}
             style={{
-              padding: '12px 14px', borderRadius: '8px', border: 'none', cursor: loading ? 'default' : 'pointer',
-              background: listening ? 'rgba(248,113,113,0.15)' : '#131f38',
-              color: listening ? '#f87171' : '#6a87ab',
+              padding: '12px 14px', borderRadius: '4px', border: 'none', cursor: loading ? 'default' : 'pointer',
+              background: listening ? 'rgba(248,113,113,0.15)' : '#333333',
+              color: listening ? '#f87171' : '#888888',
               fontSize: '18px', lineHeight: 1, transition: 'all 0.15s', flexShrink: 0,
               boxShadow: listening ? '0 0 0 1px rgba(248,113,113,0.4)' : '0 0 0 1px #1e3054',
             }}>
@@ -244,8 +244,8 @@ export default function CallPage() {
             onClick={sendMessage}
             disabled={loading || !input.trim()}
             style={{
-              padding: '12px 20px', background: loading || !input.trim() ? '#131f38' : '#f59e0b',
-              border: 'none', borderRadius: '8px', color: loading || !input.trim() ? '#6a87ab' : '#070b14',
+              padding: '12px 20px', background: loading || !input.trim() ? '#333333' : '#00aebd',
+              border: 'none', borderRadius: '4px', color: loading || !input.trim() ? '#888888' : '#1a1a1a',
               fontSize: '14px', fontWeight: 700, cursor: loading || !input.trim() ? 'default' : 'pointer',
               transition: 'all 0.15s', flexShrink: 0,
             }}>
@@ -256,13 +256,13 @@ export default function CallPage() {
 
       {/* End call dialog */}
       {showEndDialog && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(7,11,20,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '24px' }}>
-          <div style={{ background: '#0d1526', border: '1px solid #1e3054', borderRadius: '10px', padding: '28px', maxWidth: '400px', width: '100%' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#e2eaf6', marginBottom: '8px' }}>End the call early?</h3>
-            <p style={{ fontSize: '14px', color: '#6a87ab', lineHeight: 1.6, marginBottom: '20px' }}>You&apos;ve only had {sellerMessages} exchanges with Liz. Ending early will affect your score. Are you sure?</p>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,26,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '24px' }}>
+          <div style={{ background: '#2a2a2a', border: '1px solid #1e3054', borderRadius: '4px', padding: '28px', maxWidth: '400px', width: '100%' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>End the call early?</h3>
+            <p style={{ fontSize: '14px', color: '#888888', lineHeight: 1.6, marginBottom: '20px' }}>You&apos;ve only had {sellerMessages} exchanges with Liz. Ending early will affect your score. Are you sure?</p>
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button onClick={() => setShowEndDialog(false)} style={{ flex: 1, padding: '12px', background: 'transparent', border: '1px solid #1e3054', borderRadius: '6px', color: '#6a87ab', fontSize: '14px', cursor: 'pointer' }}>Keep Going</button>
-              <button onClick={endCall} style={{ flex: 1, padding: '12px', background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '6px', color: '#f87171', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>End Call</button>
+              <button onClick={() => setShowEndDialog(false)} style={{ flex: 1, padding: '12px', background: 'transparent', border: '1px solid #1e3054', borderRadius: '4px', color: '#888888', fontSize: '14px', cursor: 'pointer' }}>Keep Going</button>
+              <button onClick={endCall} style={{ flex: 1, padding: '12px', background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '4px', color: '#f87171', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>End Call</button>
             </div>
           </div>
         </div>
