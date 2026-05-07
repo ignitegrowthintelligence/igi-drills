@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import ScoreBar from '@/components/ScoreBar'
@@ -19,8 +19,20 @@ export default function ResultsPage() {
   const [loadingStep, setLoadingStep] = useState(0)
   const [scores, setScores] = useState<ScoreResult | null>(null)
   const [error, setError] = useState('')
+  const postScoreRan = useRef(false)
 
   useEffect(() => {
+    // ── Bug fix: skip re-scoring if results already exist ──────────────────
+    const existingScores = sessionStorage.getItem('drills_scores')
+    if (existingScores) {
+      try {
+        setScores(JSON.parse(existingScores))
+        return
+      } catch {
+        // corrupt — fall through to re-score
+      }
+    }
+
     const transcriptRaw = sessionStorage.getItem('drills_transcript')
     const prepQRaw = sessionStorage.getItem('drills_prep_questions')
     const prepARaw = sessionStorage.getItem('drills_prep_answers')
@@ -51,6 +63,14 @@ export default function ResultsPage() {
         sessionStorage.setItem('drills_coaching', data.coaching || '')
         sessionStorage.setItem('drills_sbs', JSON.stringify(data.sideBySide || []))
         setTimeout(() => setScores(data), 600)
+
+        // Fire email + save-session best-effort (non-blocking)
+        if (!postScoreRan.current) {
+          postScoreRan.current = true
+          const sellerRaw = sessionStorage.getItem('drills_seller')
+          const seller = sellerRaw ? JSON.parse(sellerRaw) : { name: 'Unknown', email: '' }
+          sendPostScoreActions(data, transcript, prepAnswers, seller)
+        }
       })
       .catch(() => {
         clearInterval(interval)
@@ -156,4 +176,28 @@ export default function ResultsPage() {
       </main>
     </div>
   )
+}
+
+// ── Post-score side effects (fire and forget) ──────────────────────────────
+function sendPostScoreActions(
+  scores: ScoreResult,
+  transcript: Array<{ speaker: string; text: string }>,
+  prepAnswers: string[],
+  seller: { name: string; email: string }
+) {
+  // Send results email
+  if (seller.email) {
+    fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scores, seller }),
+    }).catch(() => { /* best-effort */ })
+  }
+
+  // Save session to Supabase
+  fetch('/api/save-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ scores, transcript, prepAnswers, seller }),
+  }).catch(() => { /* best-effort */ })
 }

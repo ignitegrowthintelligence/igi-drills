@@ -16,7 +16,17 @@ export default function SideBySidePage() {
     } catch {
       setMoments([])
     }
+    // Always reset to first moment on mount
+    setIdx(0)
   }, [])
+
+  function handlePrev() {
+    setIdx(i => Math.max(0, i - 1))
+  }
+
+  function handleNext() {
+    setIdx(i => Math.min(moments.length - 1, i + 1))
+  }
 
   if (moments.length === 0) {
     return (
@@ -26,16 +36,7 @@ export default function SideBySidePage() {
           <p style={{ color: '#6a87ab', fontSize: '15px' }}>No side-by-side moments available.</p>
           <button
             onClick={() => router.push('/results')}
-            style={{
-              marginTop: '20px',
-              padding: '12px 24px',
-              background: '#f59e0b',
-              border: 'none',
-              borderRadius: '6px',
-              color: '#070b14',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
+            style={{ marginTop: '20px', padding: '12px 24px', background: '#f59e0b', border: 'none', borderRadius: '6px', color: '#070b14', fontWeight: 700, cursor: 'pointer' }}
           >
             ← Back to Results
           </button>
@@ -45,6 +46,7 @@ export default function SideBySidePage() {
   }
 
   const moment = moments[idx]
+  const isFirst = idx === 0
   const isLast = idx === moments.length - 1
 
   return (
@@ -62,19 +64,12 @@ export default function SideBySidePage() {
         <p style={{ fontSize: '13px', color: '#6a87ab', marginBottom: '20px', lineHeight: 1.6 }}>{moment.context}</p>
 
         {/* Liz said */}
-        <div style={{
-          background: '#0d1526',
-          border: '1px solid #1e3054',
-          borderLeft: '3px solid #4a9eff',
-          borderRadius: '6px',
-          padding: '16px 20px',
-          marginBottom: '20px',
-        }}>
+        <div style={{ background: '#0d1526', border: '1px solid #1e3054', borderLeft: '3px solid #4a9eff', borderRadius: '6px', padding: '16px 20px', marginBottom: '20px' }}>
           <p style={{ fontSize: '11px', color: '#4a9eff', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px' }}>
             Liz Said
           </p>
           <p style={{ fontSize: '14px', color: '#e2eaf6', fontStyle: 'italic', lineHeight: 1.6 }}>
-            "{moment.lizSaid}"
+            &quot;{moment.lizSaid}&quot;
           </p>
         </div>
 
@@ -95,14 +90,7 @@ export default function SideBySidePage() {
         </div>
 
         {/* The Gap */}
-        <div style={{
-          background: 'rgba(245,158,11,0.06)',
-          border: '1px solid rgba(245,158,11,0.2)',
-          borderLeft: '3px solid #f59e0b',
-          borderRadius: '6px',
-          padding: '16px 20px',
-          marginBottom: '28px',
-        }}>
+        <div style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)', borderLeft: '3px solid #f59e0b', borderRadius: '6px', padding: '16px 20px', marginBottom: '28px' }}>
           <p style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px' }}>
             The Gap
           </p>
@@ -112,35 +100,36 @@ export default function SideBySidePage() {
         {/* Navigation */}
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
           <button
-            onClick={() => setIdx(idx - 1)}
-            disabled={idx === 0}
+            onClick={handlePrev}
+            disabled={isFirst}
             style={{
               padding: '12px 24px',
               background: 'transparent',
-              border: '1px solid #1e3054',
+              border: `1px solid ${isFirst ? '#0d1526' : '#1e3054'}`,
               borderRadius: '6px',
-              color: idx === 0 ? '#1e3054' : '#6a87ab',
+              color: isFirst ? '#131f38' : '#6a87ab',
               fontSize: '14px',
-              cursor: idx === 0 ? 'default' : 'pointer',
+              cursor: isFirst ? 'default' : 'pointer',
+              pointerEvents: isFirst ? 'none' : 'auto',
             }}
           >
             ← Previous
           </button>
-          <button
-            onClick={isLast ? () => router.push('/results') : () => setIdx(idx + 1)}
-            style={{
-              padding: '12px 28px',
-              background: '#f59e0b',
-              border: 'none',
-              borderRadius: '6px',
-              color: '#070b14',
-              fontSize: '14px',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            {isLast ? 'Done → Results' : 'Next →'}
-          </button>
+          {isLast ? (
+            <button
+              onClick={() => router.push('/results')}
+              style={{ padding: '12px 28px', background: '#f59e0b', border: 'none', borderRadius: '6px', color: '#070b14', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}
+            >
+              Done → Results
+            </button>
+          ) : (
+            <button
+              onClick={handleNext}
+              style={{ padding: '12px 28px', background: '#f59e0b', border: 'none', borderRadius: '6px', color: '#070b14', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}
+            >
+              Next →
+            </button>
+          )}
         </div>
       </main>
     </div>
