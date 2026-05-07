@@ -87,7 +87,7 @@ export async function POST(req: Request) {
 </html>`
 
     const { error } = await resend.emails.send({
-      from: 'IGI Drills <drills@ignitegrowthintelligence.com>',
+      from: 'IGI Drills <onboarding@resend.dev>',
       to: seller.email,
       subject: 'Your IGI Drills Results — Reveal MedSpas',
       html,
