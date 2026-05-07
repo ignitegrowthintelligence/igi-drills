@@ -17,6 +17,9 @@ export default function CallPage() {
   const [showEndDialog, setShowEndDialog] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const [listening, setListening] = useState(false)
+  const interimRef = useRef('')
 
   const sellerMessages = transcript.filter(m => m.speaker === 'seller').length
 
@@ -53,6 +56,57 @@ export default function CallPage() {
       e.preventDefault()
       sendMessage()
     }
+  }
+
+  function toggleMic() {
+    if (listening) {
+      recognitionRef.current?.stop()
+      return
+    }
+
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SR) {
+      alert('Speech recognition is not supported in this browser. Use Chrome.')
+      return
+    }
+
+    const rec: SpeechRecognition = new SR()
+    rec.continuous = true
+    rec.interimResults = true
+    rec.lang = 'en-US'
+
+    const baseText = input
+
+    rec.onstart = () => setListening(true)
+
+    rec.onresult = (e: SpeechRecognitionEvent) => {
+      let interim = ''
+      let final = ''
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript
+        if (e.results[i].isFinal) final += t
+        else interim += t
+      }
+      interimRef.current = interim
+      setInput((baseText ? baseText + ' ' : '') + final + interim)
+    }
+
+    rec.onerror = () => {
+      setListening(false)
+      recognitionRef.current = null
+    }
+
+    rec.onend = () => {
+      setListening(false)
+      recognitionRef.current = null
+      // Strip trailing interim (keep only final committed text)
+      setInput(prev => prev.replace(interimRef.current, '').trimEnd())
+      interimRef.current = ''
+      setTimeout(() => textareaRef.current?.focus(), 100)
+    }
+
+    recognitionRef.current = rec
+    rec.start()
   }
 
   function handleEndCall() {
@@ -108,20 +162,47 @@ export default function CallPage() {
       {/* Input */}
       <div style={{ background: '#0d1526', borderTop: '1px solid #1e3054', padding: '16px 24px' }}>
         <div style={{ maxWidth: '760px', margin: '0 auto', display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
+          <div style={{ flex: 1, position: 'relative' }}>
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={loading}
+              placeholder="Type your response... (Enter to send, Shift+Enter for new line)"
+              rows={2}
+              style={{
+                width: '100%', background: '#131f38', border: `1px solid ${listening ? 'rgba(248,113,113,0.5)' : '#1e3054'}`, borderRadius: '8px',
+                padding: '12px', fontSize: '14px', color: '#e2eaf6', resize: 'none', fontFamily: 'inherit',
+                opacity: loading ? 0.5 : 1, boxSizing: 'border-box',
+              }}
+            />
+            {listening && (
+              <div style={{
+                position: 'absolute', bottom: '8px', left: '12px',
+                fontSize: '11px', color: '#f87171', fontWeight: 600,
+                letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '5px',
+                pointerEvents: 'none',
+              }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f87171', display: 'inline-block', animation: 'blink 1s infinite' }} />
+                Listening...
+              </div>
+            )}
+          </div>
+          {/* Mic button */}
+          <button
+            onClick={toggleMic}
             disabled={loading}
-            placeholder="Type your response... (Enter to send, Shift+Enter for new line)"
-            rows={2}
+            title={listening ? 'Stop recording' : 'Start voice input'}
             style={{
-              flex: 1, background: '#131f38', border: '1px solid #1e3054', borderRadius: '8px',
-              padding: '12px', fontSize: '14px', color: '#e2eaf6', resize: 'none', fontFamily: 'inherit',
-              opacity: loading ? 0.5 : 1,
-            }}
-          />
+              padding: '12px 14px', borderRadius: '8px', border: 'none', cursor: loading ? 'default' : 'pointer',
+              background: listening ? 'rgba(248,113,113,0.15)' : '#131f38',
+              color: listening ? '#f87171' : '#6a87ab',
+              fontSize: '18px', lineHeight: 1, transition: 'all 0.15s', flexShrink: 0,
+              boxShadow: listening ? '0 0 0 1px rgba(248,113,113,0.4)' : '0 0 0 1px #1e3054',
+            }}>
+            🎙️
+          </button>
           <button
             onClick={sendMessage}
             disabled={loading || !input.trim()}
@@ -129,7 +210,7 @@ export default function CallPage() {
               padding: '12px 20px', background: loading || !input.trim() ? '#131f38' : '#f59e0b',
               border: 'none', borderRadius: '8px', color: loading || !input.trim() ? '#6a87ab' : '#070b14',
               fontSize: '14px', fontWeight: 700, cursor: loading || !input.trim() ? 'default' : 'pointer',
-              transition: 'all 0.15s',
+              transition: 'all 0.15s', flexShrink: 0,
             }}>
             Send
           </button>
