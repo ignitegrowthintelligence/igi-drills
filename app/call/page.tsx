@@ -117,15 +117,14 @@ export default function CallPage() {
     rec.onstart = () => setListening(true)
 
     rec.onresult = (e: SpeechRecognitionEvent) => {
+      let committed = ''
       let interim = ''
-      let final = ''
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const t = e.results[i][0].transcript
-        if (e.results[i].isFinal) final += t
-        else interim += t
+      for (let i = 0; i < e.results.length; i++) {
+        if (e.results[i].isFinal) committed += e.results[i][0].transcript
+        else interim += e.results[i][0].transcript
       }
       interimRef.current = interim
-      setInput((baseText ? baseText + ' ' : '') + final + interim)
+      setInput((baseText ? baseText.trimEnd() + ' ' : '') + committed + interim)
     }
 
     rec.onerror = () => {
@@ -136,8 +135,6 @@ export default function CallPage() {
     rec.onend = () => {
       setListening(false)
       recognitionRef.current = null
-      // Strip trailing interim (keep only final committed text)
-      setInput(prev => prev.replace(interimRef.current, '').trimEnd())
       interimRef.current = ''
       setTimeout(() => textareaRef.current?.focus(), 100)
     }

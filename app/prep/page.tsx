@@ -1,9 +1,46 @@
 ﻿'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import { pickQuestions } from '@/lib/questions'
 import type { PrepQuestion } from '@/lib/types'
+
+declare global {
+  interface SpeechRecognitionEvent extends Event {
+    readonly resultIndex: number
+    readonly results: SpeechRecognitionResultList
+  }
+  interface SpeechRecognitionResultList {
+    readonly length: number
+    item(index: number): SpeechRecognitionResult
+    [index: number]: SpeechRecognitionResult
+  }
+  interface SpeechRecognitionResult {
+    readonly isFinal: boolean
+    readonly length: number
+    item(index: number): SpeechRecognitionAlternative
+    [index: number]: SpeechRecognitionAlternative
+  }
+  interface SpeechRecognitionAlternative {
+    readonly transcript: string
+    readonly confidence: number
+  }
+  interface SpeechRecognition extends EventTarget {
+    continuous: boolean
+    interimResults: boolean
+    lang: string
+    onstart: (() => void) | null
+    onend: (() => void) | null
+    onerror: ((e: Event) => void) | null
+    onresult: ((e: SpeechRecognitionEvent) => void) | null
+    start(): void
+    stop(): void
+  }
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition
+    webkitSpeechRecognition: new () => SpeechRecognition
+  }
+}
 
 export default function PrepPage() {
   const router = useRouter()
@@ -16,8 +53,40 @@ export default function PrepPage() {
     setQuestions(qs)
   }, [])
 
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const [listening, setListening] = useState(false)
+  const interimRef = useRef('')
+
   const current = questions[step]
   const isLast = step === 2
+
+  function toggleMic() {
+    if (listening) { recognitionRef.current?.stop(); return }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SR) { alert('Speech recognition is not supported in this browser. Use Chrome.'); return }
+    const rec: SpeechRecognition = new SR()
+    rec.continuous = true
+    rec.interimResults = true
+    rec.lang = 'en-US'
+    const baseText = answers[step]
+    rec.onstart = () => setListening(true)
+    rec.onresult = (e: SpeechRecognitionEvent) => {
+      let committed = ''
+      let interim = ''
+      for (let i = 0; i < e.results.length; i++) {
+        if (e.results[i].isFinal) committed += e.results[i][0].transcript
+        else interim += e.results[i][0].transcript
+      }
+      interimRef.current = interim
+      const next = [...answers]
+      next[step] = (baseText ? baseText.trimEnd() + ' ' : '') + committed + interim
+      setAnswers(next)
+    }
+    rec.onerror = () => { setListening(false); recognitionRef.current = null }
+    rec.onend = () => { setListening(false); recognitionRef.current = null; interimRef.current = '' }
+    recognitionRef.current = rec
+    rec.start()
+  }
 
   function handleNext() {
     if (isLast) {
@@ -53,20 +122,45 @@ export default function PrepPage() {
         </div>
 
         {/* Answer */}
-        <textarea
-          value={answers[step]}
-          onChange={e => {
-            const next = [...answers]
-            next[step] = e.target.value
-            setAnswers(next)
-          }}
-          placeholder="Type your answer here..."
-          style={{
-            width: '100%', minHeight: '160px', background: '#2a2a2a', border: '1px solid #1e3054',
-            borderRadius: '4px', padding: '16px', fontSize: '14px', color: '#ffffff', lineHeight: 1.6,
-            resize: 'vertical', fontFamily: "'Inter', sans-serif",
-          }}
-        />
+        <div style={{ position: 'relative' }}>
+          <textarea
+            value={answers[step]}
+            onChange={e => {
+              const next = [...answers]
+              next[step] = e.target.value
+              setAnswers(next)
+            }}
+            placeholder="Type your answer here or use the mic..."
+            style={{
+              width: '100%', minHeight: '160px', background: '#2a2a2a',
+              border: listening ? '1px solid rgba(248,113,113,0.5)' : '1px solid #404040',
+              borderRadius: '4px', padding: '16px', fontSize: '14px', color: '#ffffff',
+              lineHeight: 1.6, resize: 'vertical', fontFamily: "'Inter', sans-serif",
+            }}
+          />
+          {listening && (
+            <p style={{ position: 'absolute', bottom: '10px', left: '14px', fontSize: '12px', color: '#f87171', pointerEvents: 'none' }}>
+              ● Listening...
+            </p>
+          )}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+          <button
+            onClick={toggleMic}
+            title={listening ? 'Stop recording' : 'Start voice input'}
+            style={{
+              padding: '8px 14px', borderRadius: '4px', border: 'none', cursor: 'pointer',
+              background: listening ? 'rgba(248,113,113,0.15)' : '#2a2a2a',
+              color: listening ? '#f87171' : '#888888',
+              fontSize: '13px', fontFamily: 'Inter, sans-serif', fontWeight: 500,
+              boxShadow: listening ? '0 0 0 1px rgba(248,113,113,0.4)' : '0 0 0 1px #404040',
+              display: 'flex', alignItems: 'center', gap: '6px',
+            }}
+          >
+            <span style={{ fontSize: '16px' }}>{listening ? '⏹' : '🎤'}</span>
+            {listening ? 'Stop' : 'Use Mic'}
+          </button>
+        </div>
 
         {/* Nav */}
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', gap: '12px' }}>
