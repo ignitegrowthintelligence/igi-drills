@@ -5,6 +5,43 @@ import Header from '@/components/Header'
 import ChatBubble from '@/components/ChatBubble'
 import type { TranscriptMessage } from '@/lib/types'
 
+declare global {
+  interface SpeechRecognitionEvent extends Event {
+    readonly resultIndex: number
+    readonly results: SpeechRecognitionResultList
+  }
+  interface SpeechRecognitionResultList {
+    readonly length: number
+    item(index: number): SpeechRecognitionResult
+    [index: number]: SpeechRecognitionResult
+  }
+  interface SpeechRecognitionResult {
+    readonly isFinal: boolean
+    readonly length: number
+    item(index: number): SpeechRecognitionAlternative
+    [index: number]: SpeechRecognitionAlternative
+  }
+  interface SpeechRecognitionAlternative {
+    readonly transcript: string
+    readonly confidence: number
+  }
+  interface SpeechRecognition extends EventTarget {
+    continuous: boolean
+    interimResults: boolean
+    lang: string
+    onstart: (() => void) | null
+    onend: (() => void) | null
+    onerror: ((e: Event) => void) | null
+    onresult: ((e: SpeechRecognitionEvent) => void) | null
+    start(): void
+    stop(): void
+  }
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition
+    webkitSpeechRecognition: new () => SpeechRecognition
+  }
+}
+
 const LIZ_OPENING = "Okay, so before we dig in — your email mentioned you've worked with other med spas to bring in new patients. What does that actually look like? What kind of results have you seen?"
 
 export default function CallPage() {
@@ -17,7 +54,7 @@ export default function CallPage() {
   const [showEndDialog, setShowEndDialog] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const recognitionRef = useRef<SpeechRecognition | null>(null) // SpeechRecognition declared in global block above
   const [listening, setListening] = useState(false)
   const interimRef = useRef('')
 
@@ -64,7 +101,7 @@ export default function CallPage() {
       return
     }
 
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
     if (!SR) {
       alert('Speech recognition is not supported in this browser. Use Chrome.')
       return
