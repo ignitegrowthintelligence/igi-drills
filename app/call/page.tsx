@@ -249,6 +249,13 @@ export default function CallPage() {
             Send
           </button>
         </div>
+        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+          <button
+            onClick={handleEndCall}
+            style={{ background: 'none', border: 'none', color: '#f87171', fontSize: '13px', fontWeight: 600, cursor: 'pointer', opacity: 0.7, letterSpacing: '0.02em' }}>
+            End Call
+          </button>
+        </div>
       </div>
 
       {/* End call dialog */}
