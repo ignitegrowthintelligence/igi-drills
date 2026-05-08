@@ -80,7 +80,7 @@ export default function BriefPage() {
         <div style={{ background: 'rgba(0,174,189,0.06)', border: '1px solid rgba(0,174,189,0.25)', borderLeft: '3px solid #00aebd', borderRadius: '4px', padding: '16px 20px', marginBottom: '32px' }}>
           <p style={{ fontSize: '12px', color: '#00aebd', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '6px' }}>Know Before You Go In</p>
           <p style={{ fontSize: '14px', color: '#ffffff', lineHeight: 1.6 }}>
-            Liz built and runs a real paid digital program — Meta paid social, Google search, display retargeting. Do not treat her like a beginner. The opportunity is in the channel gaps she has not built yet, not the channels she already runs.
+            Liz has been in marketing for 12+ years and built Mooradians&apos; digital program herself. She knows her channels, she knows her numbers, and she has been pitched by everyone in the Capital Region. Come in as a peer, not a teacher.
           </p>
         </div>
 
