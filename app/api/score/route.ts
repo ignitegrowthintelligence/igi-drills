@@ -19,8 +19,8 @@ function transcriptToString(transcript: TranscriptMessage[]): string {
 
 async function scoreWithClaude(client: Anthropic, prompt: string): Promise<any> {
   const response = await client.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 512,
+    model: 'claude-sonnet-4-6',
+    max_tokens: 600,
     messages: [{ role: 'user', content: prompt }],
   })
   const text = response.content[0].type === 'text' ? response.content[0].text : '{}'
