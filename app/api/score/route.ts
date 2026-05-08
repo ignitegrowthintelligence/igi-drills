@@ -19,8 +19,8 @@ function transcriptToString(transcript: TranscriptMessage[]): string {
 
 async function scoreWithClaude(client: Anthropic, prompt: string): Promise<any> {
   const response = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 1024,
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 512,
     messages: [{ role: 'user', content: prompt }],
   })
   const text = response.content[0].type === 'text' ? response.content[0].text : '{}'
@@ -77,7 +77,14 @@ export async function POST(req: Request) {
     const coaching = coachingRaw.content[0].type === 'text' ? coachingRaw.content[0].text : ''
 
     // Side-by-side moments
-    const sbsRaw = await scoreWithClaude(client, buildSbsPrompt(txStr))
+    const sbsResponse = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: buildSbsPrompt(txStr) }],
+    })
+    const sbsText = sbsResponse.content[0].type === 'text' ? sbsResponse.content[0].text : '[]'
+    const sbsCleaned = sbsText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim()
+    const sbsRaw = JSON.parse(sbsCleaned)
     const sideBySide = Array.isArray(sbsRaw) ? sbsRaw : []
 
     const result: ScoreResult = {
