@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     <!-- Header -->
     <div style="margin-bottom:32px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:#f59e0b;margin-bottom:8px;text-transform:uppercase;">IGI DRILLS</div>
-      <h1 style="font-size:22px;font-weight:700;color:#e2eaf6;margin:0 0 4px 0;">Your Results — Reveal MedSpas</h1>
+      <h1 style="font-size:22px;font-weight:700;color:#e2eaf6;margin:0 0 4px 0;">Your Results — Mooradians Furniture and Mattresses</h1>
       <p style="font-size:13px;color:#6a87ab;margin:0;">${date}</p>
     </div>
 
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
     const { error } = await resend.emails.send({
       from: 'IGI Drills <onboarding@resend.dev>',
       to: seller.email,
-      subject: 'Your IGI Drills Results — Reveal MedSpas',
+      subject: 'Your IGI Drills Results — Mooradians Furniture and Mattresses',
       html,
     })
 

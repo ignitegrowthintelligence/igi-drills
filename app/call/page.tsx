@@ -164,7 +164,7 @@ export default function CallPage() {
       <div style={{ background: '#2a2a2a', borderBottom: '1px solid #1e3054', padding: '10px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ display: 'inline-block', width: '8px', height: '8px', background: '#75BE19', borderRadius: '50%', animation: 'blink 2s infinite' }} />
-          <span style={{ fontSize: '13px', color: '#888888' }}>Reveal MedSpas · Liz Rose</span>
+          <span style={{ fontSize: '13px', color: '#888888' }}>Mooradians Furniture · Liz Rose</span>
           <span style={{ fontSize: '12px', color: '#404040' }}>·</span>
           <span style={{ fontSize: '12px', color: '#888888' }}>{transcript.length} exchanges</span>
         </div>

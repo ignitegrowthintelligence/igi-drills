@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'IGI Drills | Reveal MedSpas',
+  title: 'IGI Drills | Mooradians',
   description: 'Discovery call simulator for Townsquare Ignite sales reps',
 }
 
