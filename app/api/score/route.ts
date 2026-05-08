@@ -26,7 +26,7 @@ function safeParseJSON(text: string, fallback: any): any {
       .trim()
     return JSON.parse(cleaned)
   } catch {
-    console.error('JSON parse failed for text:', text?.slice(0, 200))
+    console.error('JSON parse failed:', text?.slice(0, 200))
     return fallback
   }
 }
@@ -52,7 +52,6 @@ export async function POST(req: Request) {
     const client = new Anthropic()
     const txStr = transcriptToString(transcript)
 
-    // Fallback values for each scoring dimension
     const preCallFallback = { total: 0, details: [] }
     const discoveryFallback = {
       currentMarketing: { score: 0, max: 6, reason: 'Scoring unavailable' },
@@ -74,7 +73,6 @@ export async function POST(req: Request) {
     const buriedFallback = { bonus: 0, surfaced: false, depth: 'none', reason: 'Scoring unavailable' }
     const disqualFallback = { detected: false, behaviors: [] }
 
-    // Run all 6 scoring calls in parallel — each has its own fallback so one failure can't crash the rest
     const [preCallRaw, discoveryRaw, assignmentRaw, craftRaw, buriedRaw, disqualRaw] = await Promise.all([
       scoreWithClaude(client, buildPreCallPrompt(prepQuestions, prepAnswers), preCallFallback),
       scoreWithClaude(client, buildDiscoveryPrompt(txStr), discoveryFallback),
@@ -84,7 +82,6 @@ export async function POST(req: Request) {
       scoreWithClaude(client, buildDisqualifyingPrompt(txStr), disqualFallback),
     ])
 
-    // Calculate totals with safe fallbacks
     const preCallScore = preCallRaw.total || preCallRaw.details?.reduce((s: number, d: any) => s + (d.score || 0), 0) || 0
     const discoveryScore = Object.values(discoveryRaw).reduce((s: number, v: any) => s + ((v as any).score || 0), 0) as number
     const assignmentScore = assignmentRaw.score || 0
@@ -105,7 +102,6 @@ export async function POST(req: Request) {
 
     const partialScores = { total, totalWithBonus }
 
-    // Coaching narrative
     let coaching = ''
     try {
       const coachingRaw = await client.messages.create({
@@ -119,7 +115,6 @@ export async function POST(req: Request) {
       coaching = 'Coaching narrative could not be generated for this session.'
     }
 
-    // Side-by-side moments
     let sideBySide: any[] = []
     try {
       const sbsResponse = await client.messages.create({
