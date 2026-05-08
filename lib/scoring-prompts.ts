@@ -54,11 +54,24 @@ Return ONLY valid JSON — no markdown, no explanation:
 export function buildAssignmentPrompt(transcript: string): string {
   return `You are scoring the "assignment playback" — the moment near the end of a discovery call where the seller summarizes what they've learned and proposes a clear next step.
 
-The 6 required elements are: (1) specific business outcome, (2) measurable KPI, (3) budget range, (4) launch window + campaign length, (5) target audience + geography, (6) confirmation of right next step.
+The 6 elements are: (1) business outcome, (2) measurable KPI, (3) budget range, (4) launch window + campaign length, (5) target audience + geography, (6) confirmation of right next step.
 
-For the next step: Liz Rose has authority to approve new vendor commitments in the range of $5,500 to $7,500/month. If the seller proposes a scope within that range, the correct close is asking Liz to review a proposal directly. If the scope exceeds that range or involves a strategic channel addition like CTV/OTT, the correct close is requesting a follow-up meeting that includes the family/ownership. Score the next step confirmation based on whether the seller correctly matched their close to the proposed scope.
+IMPORTANT — what counts as "present" for each element:
+- Business outcome: directional counts ("drive qualified floor traffic" is fine; it doesn't need a specific number)
+- Measurable KPI: naming a trackable category counts ("in-store visits," "form fills," "phone calls") — the seller does not need a specific agreed-upon target number
+- Budget range: reflecting a range discussed during the call counts ("somewhere around $6-7K") — the seller does not need a single committed dollar figure
+- Launch window + campaign length: directional timing counts ("live by August, 90-day test into Q4") — exact dates not required
+- Target audience + geography: capturing the key descriptors from the call counts ("Capital Region homeowners, 35-55, in-market for furniture") — precise demo specs not required
+- Right next step: this must be precise — the seller must correctly match their close to the proposed scope (see below)
 
-Scoring: 20=all 6 elements + appropriate next step, 12=4-5 elements + next step partially secured, 6=2-3 elements, 0=no real playback attempt
+For the next step: Liz Rose has authority to approve new vendor commitments in the range of $5,500 to $7,500/month. If the seller proposes a scope within that range AND no new strategic channels, the correct close is asking Liz to review a proposal directly. If the scope exceeds that range OR involves a strategic channel addition like CTV/OTT (regardless of dollar amount), the correct close is requesting a follow-up meeting that includes the family/ownership. Score the next step based on whether the seller correctly matched their close to their proposed scope.
+
+Scoring:
+20 = all 6 elements present (even if directional) + correct close
+16 = 5 of 6 elements + correct close, OR all 6 elements + close was off
+12 = 4-5 elements + close attempted (even if imperfect)
+6  = 2-3 elements captured, limited or no close
+0  = no real playback attempt
 
 TRANSCRIPT:
 ${transcript}
