@@ -7,6 +7,9 @@ export interface PrepQuestion {
   tier: string
   pts: number
   question: string
+  fullCredit?: string
+  partialCredit?: string
+  zeroCredit?: string
 }
 
 export interface QuestionScore {

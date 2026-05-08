@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     const { error } = await supabase.from('drill_sessions').insert({
       seller_name: seller.name,
       seller_email: seller.email,
-      persona: 'Reveal MedSpas',
+      persona: 'Mooradians Furniture and Mattresses',
       total_score: scores.total,
       total_with_bonus: scores.totalWithBonus,
       proposal_readiness: scores.proposalReadiness,

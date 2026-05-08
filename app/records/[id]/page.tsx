@@ -82,7 +82,7 @@ export default function SessionDetailPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#ffffff', marginBottom: '4px', fontFamily: 'Roboto, sans-serif' }}>{session.seller_name}</h1>
-              <p style={{ fontSize: '13px', color: '#888888' }}>{formatDate(session.date_taken)} · {session.persona || 'Reveal MedSpas'}</p>
+              <p style={{ fontSize: '13px', color: '#888888' }}>{formatDate(session.date_taken)} · {session.persona || 'Mooradians Furniture and Mattresses'}</p>
             </div>
             <div style={{ textAlign: 'right' }}>
               <p style={{ fontSize: '36px', fontWeight: 700, color: scoreColor, lineHeight: 1, fontFamily: 'Roboto, sans-serif' }}>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Header from '@/components/Header'
@@ -94,7 +94,7 @@ export default function RecordsPage() {
                     onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? '#2a2a2a' : '#333333')}
                   >
                     <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: 500 }}>{s.seller_name}</span>
-                    <span style={{ fontSize: '14px', color: '#888888' }}>{s.persona || 'Reveal MedSpas'}</span>
+                    <span style={{ fontSize: '14px', color: '#888888' }}>{s.persona || 'Mooradians Furniture and Mattresses'}</span>
                     <span style={{ fontSize: '14px', color: '#888888' }}>{formatDate(s.date_taken)}</span>
                     <span style={{ fontSize: '14px', color: '#00aebd', fontWeight: 700 }}>
                       {s.total_with_bonus ?? s.total_score}
@@ -141,7 +141,7 @@ export default function RecordsPage() {
                   </span>
                   <div style={{ flex: 1 }}>
                     <p style={{ fontSize: '15px', fontWeight: 600, color: '#ffffff', marginBottom: '2px' }}>{s.seller_name}</p>
-                    <p style={{ fontSize: '12px', color: '#888888' }}>{formatDate(s.date_taken)} · {s.persona || 'Reveal MedSpas'}</p>
+                    <p style={{ fontSize: '12px', color: '#888888' }}>{formatDate(s.date_taken)} · {s.persona || 'Mooradians Furniture and Mattresses'}</p>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <p style={{ fontSize: '22px', fontWeight: 700, color: '#00aebd', lineHeight: 1, fontFamily: 'Roboto, sans-serif' }}>{s.total_with_bonus ?? s.total_score}</p>

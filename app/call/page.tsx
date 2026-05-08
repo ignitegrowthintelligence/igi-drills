@@ -42,7 +42,7 @@ declare global {
   }
 }
 
-const LIZ_OPENING = "Okay, so before we dig in — your email mentioned you've worked with other med spas to bring in new patients. What does that actually look like? What kind of results have you seen?"
+const LIZ_OPENING = "Hey — I'll be honest, you were pretty persistent about getting on my calendar, and I respect that. I've got about 16 minutes. Tell me what's on your mind — what did you want to cover today?"
 
 export default function CallPage() {
   const router = useRouter()
