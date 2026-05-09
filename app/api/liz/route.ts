@@ -21,7 +21,17 @@ export async function POST(req: Request) {
     const response = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 300,
-      system: LIZ_SYSTEM_PROMPT + `\n\nThis is message ${messageCount} from the seller. Respond as Liz. 1-4 sentences maximum. Stay completely in character.`,
+      system: [
+        {
+          type: 'text',
+          text: LIZ_SYSTEM_PROMPT,
+          cache_control: { type: 'ephemeral' },
+        },
+        {
+          type: 'text',
+          text: `This is message ${messageCount} from the seller. Respond as Liz. 1-4 sentences maximum. Stay completely in character.`,
+        },
+      ],
       messages,
     })
 
