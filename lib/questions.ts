@@ -23,13 +23,6 @@ export const QUESTIONS: Record<string, Question[]> = {
       zeroCredit: "Cannot speak to tenure or ownership structure."
     },
     {
-      q: "Walk me through the major manufacturer brands they carry. Why does that brand mix matter for a marketing conversation?",
-      pts: 7,
-      fullCredit: "Names at least four major brands accurately from: Tempur-Pedic, Beautyrest, Stearns & Foster, Sealy, La-Z-Boy, Stressless by Ekornes, Canadel, Craftmaster, Bradington-Young, Fjords. Connects the brand mix to co-op funding dynamics, customer profile differences, or signals about the retailer's market position.",
-      partialCredit: "Names two or three brands but misses the connection to marketing strategy.",
-      zeroCredit: "Cannot name specific brands or makes up brands they do not carry."
-    },
-    {
       q: "What is Mooradians' stated brand positioning? What do they claim to stand for?",
       pts: 7,
       fullCredit: "References the MVP claim (Mooradians Value Promise) and names the three pillars: Always Top Quality, Always the Latest Styles, Always the Lowest Possible Price. Optionally notes that claiming all three simultaneously is a positioning weakness.",
@@ -51,13 +44,6 @@ export const QUESTIONS: Record<string, Question[]> = {
       fullCredit: "References Google paid search and display including brand defense ads, category-targeted dynamic search, and display banner retargeting. Connects this to a conclusion that someone competent is running this program.",
       partialCredit: "Knows they run Google paid ads but cannot describe the program structure or differentiate search from display.",
       zeroCredit: "Did not check the Google Ads Transparency Center or cannot speak to their Google paid presence."
-    },
-    {
-      q: "How does their organic social presence compare to a business their size and tenure? What does the gap tell you?",
-      pts: 6,
-      fullCredit: "References specific social numbers (main Facebook page around 2,000 likes, Instagram around 600 followers, location-specific Facebook pages under 200 followers each). Notes this is anemic for a 90+ year old business. Connects the gap to a strategic observation about their paid-vs-organic investment.",
-      partialCredit: "References that the social presence is small or weak but cannot cite specific numbers or draw the strategic implication.",
-      zeroCredit: "Cannot speak to their social presence or assumes it is bigger than it is."
     },
     {
       q: "Who are Mooradians' major competitors in the Capital Region, and how does Mooradians position against them?",
