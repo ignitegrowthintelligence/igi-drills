@@ -212,19 +212,11 @@ export default function CallPage() {
           <span style={{ fontSize: '12px', color: '#404040' }}>·</span>
           <span style={{ fontSize: '12px', color: '#888888' }}>{transcript.length} exchanges</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{
-            fontSize: '13px', fontWeight: 700, fontVariantNumeric: 'tabular-nums',
-            color: timeLeft <= 120 ? '#f87171' : timeLeft <= 300 ? '#f59e0b' : '#888888',
-          }}>
-            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
-          </span>
-          <button
-            onClick={handleEndCall}
-            style={{ padding: '7px 16px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '4px', color: '#f87171', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
-            End Call
-          </button>
-        </div>
+        <button
+          onClick={handleEndCall}
+          style={{ padding: '7px 16px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '4px', color: '#f87171', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+          End Call
+        </button>
       </div>
 
       {/* Chat area */}
@@ -304,7 +296,14 @@ export default function CallPage() {
             Send
           </button>
         </div>
-        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+        <div style={{ maxWidth: '760px', margin: '10px auto 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{
+            fontSize: '22px', fontWeight: 800, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em',
+            color: timeLeft <= 120 ? '#f87171' : timeLeft <= 300 ? '#f59e0b' : '#888888',
+            fontFamily: 'Roboto, sans-serif',
+          }}>
+            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+          </span>
           <button
             onClick={handleEndCall}
             style={{ background: 'none', border: 'none', color: '#f87171', fontSize: '13px', fontWeight: 600, cursor: 'pointer', opacity: 0.7, letterSpacing: '0.02em' }}>
