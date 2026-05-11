@@ -66,7 +66,6 @@ export default function ResultsPage() {
         setLoadingStep(LOADING_STEPS.length - 1)
         sessionStorage.setItem('drills_scores', JSON.stringify(data))
         sessionStorage.setItem('drills_coaching', data.coaching || '')
-        sessionStorage.setItem('drills_sbs', JSON.stringify(data.sideBySide || []))
         setTimeout(() => setScores(data), 600)
 
         if (!postScoreRan.current) {

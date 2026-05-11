@@ -7,7 +7,6 @@ import {
   buildBuriedOpportunityPrompt,
   buildDisqualifyingPrompt,
   buildCoachingPrompt,
-  buildSbsPrompt,
 } from '@/lib/scoring-prompts'
 import { TranscriptMessage, PrepQuestion, ScoreResult } from '@/lib/types'
 
@@ -102,30 +101,18 @@ export async function POST(req: Request) {
 
     const partialScores = { total, totalWithBonus }
 
-    const [coachingResult, sbsResult] = await Promise.allSettled([
-      client.messages.create({
+    let coaching = ''
+    try {
+      const coachingRaw = await client.messages.create({
         model: 'claude-sonnet-4-6',
         max_tokens: 800,
         messages: [{ role: 'user', content: buildCoachingPrompt(txStr, partialScores, prepAnswers) }],
-      }),
-      client.messages.create({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: buildSbsPrompt(txStr) }],
-      }),
-    ])
-
-    const coaching = coachingResult.status === 'fulfilled'
-      ? (coachingResult.value.content[0].type === 'text' ? coachingResult.value.content[0].text : '')
-      : 'Coaching narrative could not be generated for this session.'
-
-    const sbsText = sbsResult.status === 'fulfilled'
-      ? (sbsResult.value.content[0].type === 'text' ? sbsResult.value.content[0].text : '[]')
-      : '[]'
-    const sideBySide = (() => {
-      const parsed = safeParseJSON(sbsText, [])
-      return Array.isArray(parsed) ? parsed : []
-    })()
+      })
+      coaching = coachingRaw.content[0].type === 'text' ? coachingRaw.content[0].text : ''
+    } catch (err) {
+      console.error('Coaching generation failed:', String(err))
+      coaching = 'Coaching narrative could not be generated for this session.'
+    }
 
     const result: ScoreResult = {
       preCall: {
@@ -165,7 +152,6 @@ export async function POST(req: Request) {
         behaviors: disqualRaw.behaviors || [],
       },
       coaching,
-      sideBySide,
       total,
       totalWithBonus,
       proposalReadiness,

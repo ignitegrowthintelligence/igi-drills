@@ -9,7 +9,11 @@ export default function SessionDetailPage() {
   const router = useRouter()
   const [session, setSession] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [sbsMoments, setSbsMoments] = useState<any[]>([])
   const [sbsIndex, setSbsIndex] = useState(0)
+  const [sbsLoading, setSbsLoading] = useState(false)
+  const [sbsGenerated, setSbsGenerated] = useState(false)
+  const [sbsError, setSbsError] = useState('')
 
   useEffect(() => {
     if (!id) return
@@ -44,7 +48,31 @@ export default function SessionDetailPage() {
   )
 
   const scores = session.scores_json || {}
-  const sbsItems: any[] = scores.sideBySide || []
+
+  async function generateKeyMoments() {
+    if (!session.transcript || sbsGenerated) return
+    setSbsLoading(true)
+    setSbsError('')
+    try {
+      const res = await fetch('/api/sbs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcript: session.transcript }),
+      })
+      const data = await res.json()
+      if (data.error || !data.moments?.length) {
+        setSbsError('Could not generate key moments. Try again.')
+      } else {
+        setSbsMoments(data.moments)
+        setSbsGenerated(true)
+        setSbsIndex(0)
+      }
+    } catch {
+      setSbsError('Request failed. Try again.')
+    } finally {
+      setSbsLoading(false)
+    }
+  }
 
   function readinessColor(r: string) {
     return r === 'pass' ? '#75BE19' : '#f87171'
@@ -133,61 +161,82 @@ export default function SessionDetailPage() {
           </div>
         )}
 
-        {/* Side-by-side exchange review */}
-        {sbsItems.length > 0 && (
-          <div style={{ background: '#2a2a2a', border: '1px solid #404040', borderRadius: '4px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>Exchange Review</h2>
-              <span style={{ fontSize: '12px', color: '#888888' }}>{sbsIndex + 1} of {sbsItems.length}</span>
-            </div>
-
-            {/* Liz said */}
-            {sbsItems[sbsIndex]?.lizSaid && (
-              <div style={{ background: '#333333', border: '1px solid #404040', borderLeft: '3px solid #00aebd', borderRadius: '4px', padding: '14px 16px', marginBottom: '16px' }}>
-                <p style={{ fontSize: '11px', color: '#00aebd', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '6px', fontFamily: 'Inter, sans-serif' }}>Liz Said</p>
-                <p style={{ fontSize: '14px', color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6 }}>&quot;{sbsItems[sbsIndex].lizSaid}&quot;</p>
-              </div>
-            )}
-
-            {/* What you said vs great */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
-              <div style={{ background: '#333333', border: '1px solid #404040', borderRadius: '4px', padding: '16px' }}>
-                <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px', fontFamily: 'Inter, sans-serif' }}>What You Said</p>
-                <p style={{ fontSize: '13px', color: '#ffffff', lineHeight: 1.6 }}>{sbsItems[sbsIndex]?.whatYouSaid || sbsItems[sbsIndex]?.rep}</p>
-              </div>
-              <div style={{ background: '#333333', border: '1px solid rgba(117,190,25,0.35)', borderRadius: '4px', padding: '16px' }}>
-                <p style={{ fontSize: '11px', color: '#75BE19', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px', fontFamily: 'Inter, sans-serif' }}>What Great Sounds Like</p>
-                <p style={{ fontSize: '13px', color: '#ffffff', lineHeight: 1.6 }}>{sbsItems[sbsIndex]?.whatGreatLooksLike || sbsItems[sbsIndex]?.better}</p>
-              </div>
-            </div>
-
-            {/* The gap */}
-            {(sbsItems[sbsIndex]?.theGap || sbsItems[sbsIndex]?.why) && (
-              <div style={{ background: 'rgba(0,174,189,0.06)', border: '1px solid rgba(0,174,189,0.2)', borderLeft: '3px solid #00aebd', borderRadius: '4px', padding: '14px 16px', marginBottom: '20px' }}>
-                <p style={{ fontSize: '11px', color: '#00aebd', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '6px', fontFamily: 'Inter, sans-serif' }}>The Gap</p>
-                <p style={{ fontSize: '13px', color: '#ffffff', lineHeight: 1.7 }}>{sbsItems[sbsIndex]?.theGap || sbsItems[sbsIndex]?.why}</p>
-              </div>
-            )}
-
-            {/* Navigation */}
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <button
-                onClick={() => setSbsIndex(Math.max(0, sbsIndex - 1))}
-                disabled={sbsIndex === 0}
-                style={{ padding: '8px 16px', border: '1px solid #404040', borderRadius: '4px', background: 'transparent', color: sbsIndex === 0 ? '#404040' : '#888888', cursor: sbsIndex === 0 ? 'default' : 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}
-              >
-                ← Previous
-              </button>
-              <button
-                onClick={() => setSbsIndex(Math.min(sbsItems.length - 1, sbsIndex + 1))}
-                disabled={sbsIndex === sbsItems.length - 1}
-                style={{ padding: '8px 16px', background: sbsIndex === sbsItems.length - 1 ? '#333333' : '#00aebd', border: 'none', borderRadius: '4px', color: sbsIndex === sbsItems.length - 1 ? '#888888' : '#ffffff', cursor: sbsIndex === sbsItems.length - 1 ? 'default' : 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}
-              >
-                Next →
-              </button>
-            </div>
+        {/* Key Moments — on demand */}
+        <div style={{ background: '#2a2a2a', border: '1px solid #404040', borderRadius: '4px', padding: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: sbsGenerated ? '20px' : '0' }}>
+            <h2 style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>Key Moments</h2>
+            {sbsGenerated && <span style={{ fontSize: '12px', color: '#888888' }}>{sbsIndex + 1} of {sbsMoments.length}</span>}
           </div>
-        )}
+
+          {!sbsGenerated && (
+            <div style={{ marginTop: '16px' }}>
+              <p style={{ fontSize: '13px', color: '#888888', marginBottom: '16px', lineHeight: 1.6 }}>
+                See 2–3 specific moments from this call side-by-side with what great looks like.
+              </p>
+              {sbsError && <p style={{ fontSize: '13px', color: '#f87171', marginBottom: '12px' }}>{sbsError}</p>}
+              <button
+                onClick={generateKeyMoments}
+                disabled={sbsLoading}
+                style={{
+                  padding: '12px 24px', background: sbsLoading ? '#333333' : '#00aebd',
+                  border: 'none', borderRadius: '4px', color: sbsLoading ? '#888888' : '#1a1a1a',
+                  fontSize: '14px', fontWeight: 700, cursor: sbsLoading ? 'default' : 'pointer',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                {sbsLoading ? 'Generating key moments...' : 'Generate Key Moments'}
+              </button>
+            </div>
+          )}
+
+          {sbsGenerated && sbsMoments[sbsIndex] && (
+            <>
+              <p style={{ fontSize: '13px', color: '#888888', marginBottom: '16px', fontStyle: 'italic' }}>{sbsMoments[sbsIndex].context}</p>
+
+              {sbsMoments[sbsIndex].lizSaid && (
+                <div style={{ background: '#333333', border: '1px solid #404040', borderLeft: '3px solid #00aebd', borderRadius: '4px', padding: '14px 16px', marginBottom: '16px' }}>
+                  <p style={{ fontSize: '11px', color: '#00aebd', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '6px', fontFamily: 'Inter, sans-serif' }}>Liz Said</p>
+                  <p style={{ fontSize: '14px', color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6 }}>&quot;{sbsMoments[sbsIndex].lizSaid}&quot;</p>
+                </div>
+              )}
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
+                <div style={{ background: '#333333', border: '1px solid #404040', borderRadius: '4px', padding: '16px' }}>
+                  <p style={{ fontSize: '11px', color: '#888888', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px', fontFamily: 'Inter, sans-serif' }}>What You Said</p>
+                  <p style={{ fontSize: '13px', color: '#ffffff', lineHeight: 1.6 }}>{sbsMoments[sbsIndex].whatYouSaid}</p>
+                </div>
+                <div style={{ background: '#333333', border: '1px solid rgba(117,190,25,0.35)', borderRadius: '4px', padding: '16px' }}>
+                  <p style={{ fontSize: '11px', color: '#75BE19', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px', fontFamily: 'Inter, sans-serif' }}>What Great Sounds Like</p>
+                  <p style={{ fontSize: '13px', color: '#ffffff', lineHeight: 1.6 }}>{sbsMoments[sbsIndex].whatGreatLooksLike}</p>
+                </div>
+              </div>
+
+              {sbsMoments[sbsIndex].theGap && (
+                <div style={{ background: 'rgba(0,174,189,0.06)', border: '1px solid rgba(0,174,189,0.2)', borderLeft: '3px solid #00aebd', borderRadius: '4px', padding: '14px 16px', marginBottom: '20px' }}>
+                  <p style={{ fontSize: '11px', color: '#00aebd', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '6px', fontFamily: 'Inter, sans-serif' }}>The Gap</p>
+                  <p style={{ fontSize: '13px', color: '#ffffff', lineHeight: 1.7 }}>{sbsMoments[sbsIndex].theGap}</p>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <button
+                  onClick={() => setSbsIndex(Math.max(0, sbsIndex - 1))}
+                  disabled={sbsIndex === 0}
+                  style={{ padding: '8px 16px', border: '1px solid #404040', borderRadius: '4px', background: 'transparent', color: sbsIndex === 0 ? '#404040' : '#888888', cursor: sbsIndex === 0 ? 'default' : 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}
+                >
+                  ← Previous
+                </button>
+                <button
+                  onClick={() => setSbsIndex(Math.min(sbsMoments.length - 1, sbsIndex + 1))}
+                  disabled={sbsIndex === sbsMoments.length - 1}
+                  style={{ padding: '8px 16px', background: sbsIndex === sbsMoments.length - 1 ? '#333333' : '#00aebd', border: 'none', borderRadius: '4px', color: sbsIndex === sbsMoments.length - 1 ? '#888888' : '#ffffff', cursor: sbsIndex === sbsMoments.length - 1 ? 'default' : 'pointer', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}
+                >
+                  Next →
+                </button>
+              </div>
+            </>
+          )}
+        </div>
 
       </main>
     </div>

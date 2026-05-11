@@ -54,7 +54,7 @@ export interface ScoreResult {
   buriedOpportunity: { bonus: number; surfaced: boolean; depth: string; reason: string }
   disqualifying: { detected: boolean; behaviors: string[] }
   coaching: string
-  sideBySide: SbsMoment[]
+  sideBySide?: SbsMoment[]
   total: number
   totalWithBonus: number
   proposalReadiness: 'pass' | 'fail'

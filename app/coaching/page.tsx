@@ -45,7 +45,7 @@ export default function CoachingPage() {
         </div>
 
         <button
-          onClick={() => router.push('/sidebyside')}
+          onClick={() => router.push('/results')}
           style={{
             width: '100%',
             padding: '16px',
@@ -56,10 +56,16 @@ export default function CoachingPage() {
             fontSize: '15px',
             fontWeight: 700,
             cursor: 'pointer',
+            marginBottom: '12px',
           }}
         >
-          See Side by Side →
+          ← Back to Results
         </button>
+        <div style={{ textAlign: 'center' }}>
+          <a href="/records" style={{ fontSize: '13px', color: '#888888', textDecoration: 'none', fontFamily: 'Inter, sans-serif' }}>
+            View Past Sessions →
+          </a>
+        </div>
       </main>
     </div>
   )
