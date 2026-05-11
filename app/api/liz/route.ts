@@ -23,15 +23,15 @@ export async function POST(req: Request) {
       max_tokens: 300,
       system: [
         {
-          type: 'text',
+          type: 'text' as const,
           text: LIZ_SYSTEM_PROMPT,
           cache_control: { type: 'ephemeral' },
-        },
+        } as any,
         {
-          type: 'text',
+          type: 'text' as const,
           text: `This is message ${messageCount} from the seller. Respond as Liz. 1-4 sentences maximum. Stay completely in character.`,
         },
-      ],
+      ] as any,
       messages,
     })
 
