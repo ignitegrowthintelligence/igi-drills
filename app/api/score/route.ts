@@ -102,33 +102,30 @@ export async function POST(req: Request) {
 
     const partialScores = { total, totalWithBonus }
 
-    let coaching = ''
-    try {
-      const coachingRaw = await client.messages.create({
+    const [coachingResult, sbsResult] = await Promise.allSettled([
+      client.messages.create({
         model: 'claude-sonnet-4-6',
         max_tokens: 800,
         messages: [{ role: 'user', content: buildCoachingPrompt(txStr, partialScores, prepAnswers) }],
-      })
-      coaching = coachingRaw.content[0].type === 'text' ? coachingRaw.content[0].text : ''
-    } catch (err) {
-      console.error('Coaching generation failed:', String(err))
-      coaching = 'Coaching narrative could not be generated for this session.'
-    }
-
-    let sideBySide: any[] = []
-    try {
-      const sbsResponse = await client.messages.create({
+      }),
+      client.messages.create({
         model: 'claude-sonnet-4-6',
         max_tokens: 2000,
         messages: [{ role: 'user', content: buildSbsPrompt(txStr) }],
-      })
-      const sbsText = sbsResponse.content[0].type === 'text' ? sbsResponse.content[0].text : '[]'
-      const sbsRaw = safeParseJSON(sbsText, [])
-      sideBySide = Array.isArray(sbsRaw) ? sbsRaw : []
-    } catch (err) {
-      console.error('SBS generation failed:', String(err))
-      sideBySide = []
-    }
+      }),
+    ])
+
+    const coaching = coachingResult.status === 'fulfilled'
+      ? (coachingResult.value.content[0].type === 'text' ? coachingResult.value.content[0].text : '')
+      : 'Coaching narrative could not be generated for this session.'
+
+    const sbsText = sbsResult.status === 'fulfilled'
+      ? (sbsResult.value.content[0].type === 'text' ? sbsResult.value.content[0].text : '[]')
+      : '[]'
+    const sideBySide = (() => {
+      const parsed = safeParseJSON(sbsText, [])
+      return Array.isArray(parsed) ? parsed : []
+    })()
 
     const result: ScoreResult = {
       preCall: {
