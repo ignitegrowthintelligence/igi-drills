@@ -160,6 +160,7 @@ export default function CallPage() {
     rec.onstart = () => setListening(true)
 
     rec.onresult = (e: SpeechRecognitionEvent) => {
+      if (deadAirRef.current) clearTimeout(deadAirRef.current)
       let committed = ''
       let interim = ''
       for (let i = 0; i < e.results.length; i++) {
