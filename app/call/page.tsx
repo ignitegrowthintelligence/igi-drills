@@ -44,6 +44,16 @@ declare global {
 
 const LIZ_OPENING = "Hey — I'll be honest, you were pretty persistent about getting on my calendar, and I respect that. I've got about 16 minutes. Tell me what's on your mind — what did you want to cover today?"
 
+const DEAD_AIR_RESPONSES = [
+  "You still there?",
+  "Go ahead, I'm listening.",
+  "Take your time.",
+  "Still with me?",
+  "I've got a few minutes — what's on your mind?",
+]
+
+const CALL_DURATION = 16 * 60 // 16 minutes in seconds
+
 export default function CallPage() {
   const router = useRouter()
   const [transcript, setTranscript] = useState<TranscriptMessage[]>([
@@ -52,13 +62,46 @@ export default function CallPage() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [showEndDialog, setShowEndDialog] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(CALL_DURATION)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const recognitionRef = useRef<SpeechRecognition | null>(null) // SpeechRecognition declared in global block above
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
   const [listening, setListening] = useState(false)
   const interimRef = useRef('')
+  const deadAirRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const transcriptRef = useRef(transcript)
+  useEffect(() => { transcriptRef.current = transcript }, [transcript])
 
   const sellerMessages = transcript.filter(m => m.speaker === 'seller').length
+
+  // Countdown timer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeLeft(t => {
+        if (t <= 1) {
+          clearInterval(interval)
+          endCall()
+          return 0
+        }
+        return t - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Dead air detection — fires 8s after Liz responds if seller hasn't typed or sent
+  useEffect(() => {
+    const lastMsg = transcript[transcript.length - 1]
+    if (!loading && lastMsg?.speaker === 'liz') {
+      deadAirRef.current = setTimeout(() => {
+        const response = DEAD_AIR_RESPONSES[Math.floor(Math.random() * DEAD_AIR_RESPONSES.length)]
+        setTranscript(prev => [...prev, { speaker: 'liz', text: response }])
+      }, 8000)
+    }
+    return () => {
+      if (deadAirRef.current) clearTimeout(deadAirRef.current)
+    }
+  }, [transcript, loading])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -152,7 +195,7 @@ export default function CallPage() {
   }
 
   function endCall() {
-    sessionStorage.setItem('drills_transcript', JSON.stringify(transcript))
+    sessionStorage.setItem('drills_transcript', JSON.stringify(transcriptRef.current))
     router.push('/results')
   }
 
@@ -168,11 +211,19 @@ export default function CallPage() {
           <span style={{ fontSize: '12px', color: '#404040' }}>·</span>
           <span style={{ fontSize: '12px', color: '#888888' }}>{transcript.length} exchanges</span>
         </div>
-        <button
-          onClick={handleEndCall}
-          style={{ padding: '7px 16px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '4px', color: '#f87171', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
-          End Call
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{
+            fontSize: '13px', fontWeight: 700, fontVariantNumeric: 'tabular-nums',
+            color: timeLeft <= 120 ? '#f87171' : timeLeft <= 300 ? '#f59e0b' : '#888888',
+          }}>
+            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+          </span>
+          <button
+            onClick={handleEndCall}
+            style={{ padding: '7px 16px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '4px', color: '#f87171', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+            End Call
+          </button>
+        </div>
       </div>
 
       {/* Chat area */}
@@ -200,7 +251,10 @@ export default function CallPage() {
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={e => {
+                setInput(e.target.value)
+                if (deadAirRef.current) clearTimeout(deadAirRef.current)
+              }}
               onKeyDown={handleKeyDown}
               disabled={loading}
               placeholder="Type your response... (Enter to send, Shift+Enter for new line)"
