@@ -89,14 +89,14 @@ export default function CallPage() {
     return () => clearInterval(interval)
   }, [])
 
-  // Dead air detection — fires 8s after Liz responds if seller hasn't typed or sent
+  // Dead air detection — fires 30s after Liz responds if seller hasn't typed or sent
   useEffect(() => {
     const lastMsg = transcript[transcript.length - 1]
     if (!loading && lastMsg?.speaker === 'liz') {
       deadAirRef.current = setTimeout(() => {
         const response = DEAD_AIR_RESPONSES[Math.floor(Math.random() * DEAD_AIR_RESPONSES.length)]
         setTranscript(prev => [...prev, { speaker: 'liz', text: response }])
-      }, 8000)
+      }, 30000)
     }
     return () => {
       if (deadAirRef.current) clearTimeout(deadAirRef.current)
