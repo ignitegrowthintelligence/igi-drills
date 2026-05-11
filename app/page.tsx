@@ -19,6 +19,12 @@ export default function CapturePage() {
 
   function handleContinue() {
     if (!validate()) return
+    // Clear any previous session data so results page scores fresh
+    sessionStorage.removeItem('drills_scores')
+    sessionStorage.removeItem('drills_coaching')
+    sessionStorage.removeItem('drills_transcript')
+    sessionStorage.removeItem('drills_prep_questions')
+    sessionStorage.removeItem('drills_prep_answers')
     sessionStorage.setItem('drills_seller', JSON.stringify({ name: name.trim(), email: email.trim() }))
     router.push('/brief')
   }
