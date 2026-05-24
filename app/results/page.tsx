@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import ScoreBar from '@/components/ScoreBar'
 import type { ScoreResult } from '@/lib/types'
+import { apiFetch } from '@/lib/api-client'
 
 const LOADING_STEPS = [
   'Analyzing pre-call preparation...',
@@ -51,7 +52,7 @@ export default function ResultsPage() {
       if (step < LOADING_STEPS.length) setLoadingStep(step)
     }, 1500)
 
-    fetch('/api/score', {
+    apiFetch('/api/score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ transcript, prepQuestions, prepAnswers }),
@@ -204,14 +205,14 @@ function sendPostScoreActions(
   seller: { name: string; email: string }
 ) {
   if (seller.email) {
-    fetch('/api/email', {
+    apiFetch('/api/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ scores, seller }),
     }).catch(() => { /* best-effort */ })
   }
 
-  fetch('/api/save-session', {
+  apiFetch('/api/save-session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ scores, transcript, prepAnswers, seller }),

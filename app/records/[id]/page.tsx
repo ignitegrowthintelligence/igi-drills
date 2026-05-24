@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
+import { apiFetch } from '@/lib/api-client'
 import ScoreBar from '@/components/ScoreBar'
 
 export default function SessionDetailPage() {
@@ -17,7 +18,7 @@ export default function SessionDetailPage() {
 
   useEffect(() => {
     if (!id) return
-    fetch(`/api/sessions/${id}`)
+    apiFetch(`/api/sessions/${id}`)
       .then(r => r.json())
       .then(data => { setSession(data); setLoading(false) })
       .catch(() => setLoading(false))
@@ -54,7 +55,7 @@ export default function SessionDetailPage() {
     setSbsLoading(true)
     setSbsError('')
     try {
-      const res = await fetch('/api/sbs', {
+      const res = await apiFetch('/api/sbs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ transcript: session.transcript }),

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Header from '@/components/Header'
+import { apiFetch } from '@/lib/api-client'
 
 type SessionRow = {
   id: string
@@ -22,7 +23,7 @@ export default function RecordsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/sessions')
+    apiFetch('/api/sessions')
       .then(r => r.json())
       .then(data => { setSessions(Array.isArray(data) ? data : []); setLoading(false) })
       .catch(() => setLoading(false))
