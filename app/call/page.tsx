@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import ChatBubble from '@/components/ChatBubble'
 import type { TranscriptMessage } from '@/lib/types'
+import { apiFetch } from '@/lib/api-client'
 
 declare global {
   interface SpeechRecognitionEvent extends Event {
@@ -116,7 +117,7 @@ export default function CallPage() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/liz', {
+      const res = await apiFetch('/api/liz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ transcript: newTranscript, messageCount: sellerMessages + 1 }),
